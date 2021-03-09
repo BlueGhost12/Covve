@@ -87,11 +87,26 @@ class DatabaseHelper {
 
   Future<bool> checkIfEmailExists(String email) async {
     Database db = await instance.database;
-    List<dynamic> whereargs = [email];
+    List<dynamic> whereArgs = [email];
     List<Map> result = await db.query(_userTable,
-        where: '$userEmail = ?', whereArgs: whereargs);
+        where: '$userEmail = ?', whereArgs: whereArgs);
     Map a = result.firstWhere((element) => element['email'] == email,
         orElse: () => null);
     return !(a == null);
+  }
+
+  Future<int> checkIfValidCredentials(String email, String password) async {
+    Database db = await instance.database;
+    List<dynamic> whereArgs = [email, password];
+    List<Map> result = await db.query(_userTable,
+        where: '$userEmail = ? and $userPassword = ?', whereArgs: whereArgs);
+    Map userInfo = result.firstWhere(
+        (element) =>
+            element['email'] == email && element['password'] == password,
+        orElse: () => null);
+    if (userInfo == null)
+      return -1;
+    else
+      return userInfo['id'];
   }
 }

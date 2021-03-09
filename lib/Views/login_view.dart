@@ -1,5 +1,7 @@
 import 'package:covve/Custom_widgets/form_text_field.dart';
+import 'package:covve/Helpers/store_in_shared_prefs.dart';
 import 'package:covve/Scoped_models/login_model.dart';
+import 'package:covve/Views/contact_list_view.dart';
 import 'package:covve/Views/signup_view.dart';
 import 'package:covve/service_locator.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,37 @@ import 'package:scoped_model/scoped_model.dart';
 
 class LoginPage extends StatelessWidget {
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  void handleFormSubmission(BuildContext context, LoginModel model) async {
+    if (!_loginFormKey.currentState.validate()) return;
+    int id = await model.checkIfValidCredentials(
+        emailController.text, passwordController.text);
+    if (id < 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Invalid email or password',
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Colors.red[300],
+        ),
+      );
+      return;
+    }
+    _loginFormKey.currentState.save();
+
+    // store in sharedPrefs
+    Map userInfo = {'userId': id, 'email': model.email};
+    storeInSharedPrefs(userInfo);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ContactListPage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModel<LoginModel>(
@@ -26,6 +59,7 @@ class LoginPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       FormTextField(
+                        controller: emailController,
                         label: 'Email',
                         validation: (String value) {
                           return value.isEmpty
@@ -40,6 +74,7 @@ class LoginPage extends StatelessWidget {
                         },
                       ),
                       FormTextField(
+                        controller: passwordController,
                         label: 'Password',
                         validation: (String value) {
                           return value.isEmpty ? 'Password is required' : null;
@@ -53,10 +88,34 @@ class LoginPage extends StatelessWidget {
                         height: 50.0,
                       ),
                       MaterialButton(
-                        onPressed: () {
-                          if (!_loginFormKey.currentState.validate()) return;
-                          _loginFormKey.currentState.save();
-                          //  TODO make database call to check if model exists
+                        onPressed: () async {
+                          handleFormSubmission(context, model);
+                          // if (!_loginFormKey.currentState.validate()) return;
+                          // int id = await model.checkIfValidCredentials(
+                          //     emailController.text, passwordController.text);
+                          // if (id < 0) {
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     SnackBar(
+                          //       content: Text(
+                          //         'Invalid email or password',
+                          //         textAlign: TextAlign.center,
+                          //       ),
+                          //       backgroundColor: Colors.red[300],
+                          //     ),
+                          //   );
+                          //   return;
+                          // }
+                          // _loginFormKey.currentState.save();
+                          // final prefs = await SharedPreferences.getInstance();
+                          // Map userInfo = {'userId': id, 'email': model.email};
+                          // String info = jsonEncode(userInfo);
+                          // prefs.setString('userInfo', info);
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => ContactListPage(),
+                          //   ),
+                          // );
                         },
                         child: Text(
                           'Login',

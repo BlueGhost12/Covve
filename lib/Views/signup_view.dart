@@ -1,6 +1,7 @@
 import 'package:covve/Custom_widgets/form_text_field.dart';
 import 'package:covve/Scoped_models/signup_model.dart';
 import 'package:covve/Views/login_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../service_locator.dart';
@@ -31,6 +32,7 @@ class SignUpPage extends StatelessWidget {
                           label: 'Email',
                           controller: emailController,
                           validation: (String value) {
+                            // bool doesExist = model.checkIfEmailExists(value);
                             return value.isEmpty
                                 ? 'Email cannot be empty'
                                 : !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -77,12 +79,26 @@ class SignUpPage extends StatelessWidget {
                             if (!_signUpFormKey.currentState.validate()) return;
                             bool doesExists = await model
                                 .checkIfEmailExists(emailController.text);
-                            print("The email exists or not ");
-                            print(doesExists);
-                            print('yaaay!!');
+                            if (doesExists) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Email already exists',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  backgroundColor: Colors.red[300],
+                                ),
+                              );
+                              return;
+                            }
                             _signUpFormKey.currentState.save();
                             int res = await model.registerUser();
-                            print(res);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ),
+                            );
                           },
                           child: Text(
                             'SignUp',
