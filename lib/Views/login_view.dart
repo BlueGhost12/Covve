@@ -1,6 +1,7 @@
 import 'package:covve/Custom_widgets/form_text_field.dart';
-import 'package:covve/Helpers/store_in_shared_prefs.dart';
+import 'package:covve/Helpers/navigator.dart';
 import 'package:covve/Scoped_models/login_model.dart';
+import 'package:covve/Services/sharedPrefs.dart';
 import 'package:covve/Views/contact_list_view.dart';
 import 'package:covve/Views/signup_view.dart';
 import 'package:covve/service_locator.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class LoginPage extends StatelessWidget {
+  final SharedPrefs sharedPrefs = locator<SharedPrefs>();
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -30,14 +32,10 @@ class LoginPage extends StatelessWidget {
     _loginFormKey.currentState.save();
 
     // store in sharedPrefs
-    Map userInfo = {'userId': id, 'email': model.email};
-    storeInSharedPrefs(userInfo);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ContactListPage(),
-      ),
-    );
+    sharedPrefs.storeInSharedPrefs({'userId': id, 'email': model.email});
+
+    // navigate to contact List page
+    Navigator.of(context).pushNamed('contactList');
   }
 
   @override
@@ -143,8 +141,7 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SignUpPage()));
+                    Navigator.of(context).pushNamed('signUp');
                   },
                   minWidth: double.infinity,
                   color: Colors.white,
