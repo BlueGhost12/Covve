@@ -55,27 +55,23 @@ class DatabaseHelper {
         CREATE TABLE $_userTable (
           $userId INTEGER PRIMARY KEY,
           $userEmail TEXT NOT NULL, 
-          $userPassword TEXT NOT NULL,
-          FOREIGN KEY($userId) REFERENCES $_contactsTable($contactUserId)) 
+          $userPassword TEXT NOT NULL)
         ''');
     await db.execute('''
         CREATE TABLE $_contactsTable(
           $contactUserId INTEGER,
           $contactName TEXT NOT NULL,
           $contactId INTEGER,
-          $contactAddress TEXT NOT NULL,
-          PRIMARY KEY ($contactUserId, $contactId),
-          FOREIGN KEY ($contactId) REFERENCES $_phoneNumbersTable ($phoneNumberId)
-          FOREIGN KEY ($contactId) REFERENCES $_emailsTable ($emailId));
+          $contactAddress TEXT NOT NULL)
         ''');
     db.execute('''
         CREATE TABLE $_phoneNumbersTable(
-          $phoneNumberId INTEGER PRIMARY KEY,
+          $phoneNumberId INTEGER,
           $phoneNumberPhoneNumber TEXT NOT NULL)
         ''');
     db.execute('''
         CREATE TABLE $_emailsTable(
-          $emailId INTEGER PRIMARY KEY,
+          $emailId INTEGER,
           $emailEmail TEXT NOT NULL)
         ''');
   }
