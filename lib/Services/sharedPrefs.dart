@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SharedPrefs {
   String userData = 'userInfo';
   void storeInSharedPrefs(Map data) async {
+    //userId, email
     final prefs = await SharedPreferences.getInstance();
     String info = jsonEncode(data);
     prefs.setString(userData, info);

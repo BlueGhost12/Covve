@@ -1,7 +1,5 @@
 import 'package:covve/Custom_widgets/form_text_field.dart';
-import 'package:covve/Helpers/navigator.dart';
 import 'package:covve/Scoped_models/signup_model.dart';
-import 'package:covve/Views/login_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';

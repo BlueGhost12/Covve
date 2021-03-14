@@ -1,117 +1,15 @@
+import 'dart:io';
+import 'package:covve/Custom_widgets/add_email_field.dart';
+import 'package:covve/Custom_widgets/add_phoneNumber_field.dart';
 import 'package:covve/Custom_widgets/form_text_field.dart';
+import 'package:covve/Models/email.dart';
+import 'package:covve/Models/phoneNumber.dart';
 import 'package:covve/Scoped_models/contact_add_edit_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:covve/service_locator.dart';
-
-// class ContactEditAddPage extends StatelessWidget {
-//   final GlobalKey<FormState> _contactAddEditFormKey = GlobalKey<FormState>();
-//   final nameController = TextEditingController();
-//   final addressController = TextEditingController();
-//   final emailController = TextEditingController();
-//   final phoneNumberController = TextEditingController();
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return ScopedModel<ContactAddEditModel>(
-//       model: locator<ContactAddEditModel>(),
-//       child: ScopedModelDescendant<ContactAddEditModel>(
-//         builder: (context, child, model) => Scaffold(
-//           body: Padding(
-//             padding: const EdgeInsets.all(16.0),
-//             child: Column(
-//               children: [
-//                 Form(
-//                   key: _contactAddEditFormKey,
-//                   child: Column(
-//                     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                     children: [
-//                       FormTextField(
-//                         controller: nameController,
-//                         label: 'Name',
-//                         validation: (String value) {
-//                           return value.isEmpty ? 'Name cannot be empty' : null;
-//                         },
-//                         handleData: (String value) {
-//                           model.name = value;
-//                         },
-//                       ),
-//                       SizedBox(
-//                         height: 30.0,
-//                       ),
-//                       FormTextField(
-//                         controller: addressController,
-//                         label: 'Address',
-//                         handleData: (String value) {
-//                           model.email = value;
-//                         },
-//                       ),
-//                       SizedBox(
-//                         height: 30.0,
-//                       ),
-//                       Row(
-//                         children: [
-//                           Expanded(
-//                             child: FormTextField(
-//                               controller: phoneNumberController,
-//                               label: 'Phone Number',
-//                               handleData: (String value) {
-//                                 model.number = value;
-//                               },
-//                             ),
-//                           ),
-//                           IconButton(
-//                             icon: Icon(
-//                               Icons.add,
-//                               size: 30.0,
-//                             ),
-//                             onPressed: () {
-//                               print('from page before adding: ' +
-//                                   (model.phoneNumbersField.length).toString());
-//                               model.buildPhoneNumberFieldList(
-//                                   model.phoneNumbersField.length + 1);
-//                               print('from page after adding: ' +
-//                                   (model.phoneNumbersField.length).toString());
-//                             },
-//                           ),
-//                         ],
-//                       ),
-//                       ...model.phoneNumbersField,
-//                       SizedBox(
-//                         height: 30.0,
-//                       ),
-//                       FormTextField(
-//                         controller: emailController,
-//                         label: 'Email',
-//                         handleData: (String value) {
-//                           model.email = value;
-//                         },
-//                       ),
-//                       SizedBox(
-//                         height: 30.0,
-//                       ),
-//                       MaterialButton(
-//                         onPressed: () {},
-//                         child: Text(
-//                           'Add Contact',
-//                           style: TextStyle(
-//                             color: Colors.white,
-//                           ),
-//                         ),
-//                         minWidth: double.infinity,
-//                         color: Colors.blueAccent,
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class ContactEditAddPage extends StatefulWidget {
   @override
@@ -125,72 +23,124 @@ class _ContactEditAddPageState extends State<ContactEditAddPage> {
 
   final addressController = TextEditingController();
 
-  final emailController = TextEditingController();
+  List<TextEditingController> numberControllers = [];
+  List<TextEditingController> emailControllers = [];
+  List<PhoneNumber> numbers = [];
+  List<Email> emails = [];
+  File selectedImage;
 
-  List<Row> phoneNumbersField = [];
+  List<CustomEmailField> addableEmailFields = [];
+  List<CustomPhoneNumberField> addablePhoneNumbersField = [];
 
-  final phoneNumberController = TextEditingController();
-
-  List<Row> phoneNumberFieldBuilder(ContactAddEditModel model) {
-    List<Row> row = phoneNumbersField.map((e) {
+  List<CustomEmailField> addableEmailFieldBuilder(ContactAddEditModel model) {
+    List<CustomEmailField> fields = addableEmailFields.map((e) {
       Key key = UniqueKey();
-      int ind = phoneNumbersField.indexOf(e);
-      return Row(
+      int ind = addableEmailFields.indexOf(e) + 1;
+      return CustomEmailField(
         key: key,
-        children: [
-          Expanded(
-            child: FormTextField(
-              label: 'Phone Number $ind',
-              handleData: (String value) {
-                model.number = value;
-              },
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.delete_forever_outlined,
-              size: 35.0,
-            ),
-            onPressed: () {
-              setState(() {
-                phoneNumbersField.removeWhere((element) => element.key == key);
-                phoneNumbersField = phoneNumberFieldBuilder(model);
-              });
-            },
-          ),
-        ],
+        controller: emailControllers[ind - 1],
+        label: 'Email',
+        index: ind,
+        model: model,
+        onPressed: () {
+          setState(() {
+            int indexToRemove =
+                addableEmailFields.indexWhere((element) => element.key == key);
+            emailControllers.removeAt(indexToRemove);
+            emails.removeAt(indexToRemove);
+            addableEmailFields.removeWhere((element) => element.key == key);
+            addableEmailFields = addableEmailFieldBuilder(model);
+          });
+        },
+        onHandle: (String value) {
+          int indexToAddAt =
+              addableEmailFields.indexWhere((element) => element.key == key);
+          emails[indexToAddAt].email = value;
+        },
       );
     }).toList();
-    return [...row];
+    return fields;
   }
 
-  void phoneNumbersFieldAdd(ContactAddEditModel model) {
-    Key lastKey = UniqueKey();
-    phoneNumbersField.add(Row(
-      key: lastKey,
-      children: [
-        Expanded(
-          child: FormTextField(
-            label: 'Phone Number ${phoneNumbersField.length}',
-            handleData: (String value) {
-              model.number = value;
-            },
-          ),
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.delete_forever_outlined,
-            size: 35.0,
-          ),
-          onPressed: () {
-            setState(() {
-              phoneNumbersField
-                  .removeWhere((element) => element.key == lastKey);
-            });
-          },
-        ),
-      ],
-    ));
+  void addNewEmailField(ContactAddEditModel model) {
+    emailControllers.add(TextEditingController());
+    Email email = new Email();
+    emails.add(email);
+    addableEmailFields.add(CustomEmailField(
+        controller: emailControllers.last,
+        label: 'Email',
+        model: model,
+        onPressed: () {}));
+  }
+
+  List<CustomPhoneNumberField> addablePhoneNumberFieldBuilder(
+      ContactAddEditModel model) {
+    List<CustomPhoneNumberField> fields = addablePhoneNumbersField.map((e) {
+      Key key = UniqueKey();
+      int ind = addablePhoneNumbersField.indexOf(e) + 1;
+      return CustomPhoneNumberField(
+        key: key,
+        controller: numberControllers[ind - 1],
+        label: 'Phone Number',
+        index: ind,
+        model: model,
+        onPressed: () {
+          setState(() {
+            int indexToRemove = addablePhoneNumbersField
+                .indexWhere((element) => element.key == key);
+            numberControllers.removeAt(indexToRemove);
+            numbers.removeAt(indexToRemove);
+            addablePhoneNumbersField
+                .removeWhere((element) => element.key == key);
+            addablePhoneNumbersField = addablePhoneNumberFieldBuilder(model);
+          });
+        },
+        onHandle: (String value) {
+          int indexToAddAt = addablePhoneNumbersField
+              .indexWhere((element) => element.key == key);
+          numbers[indexToAddAt].phoneNumber = value;
+        },
+      );
+    }).toList();
+    return fields;
+  }
+
+  void addNewPhoneNumberField(ContactAddEditModel model) {
+    numberControllers.add(TextEditingController());
+    PhoneNumber phone = new PhoneNumber();
+    numbers.add(phone);
+    addablePhoneNumbersField.add(CustomPhoneNumberField(
+        controller: numberControllers.last,
+        label: 'Phone Number',
+        model: model,
+        onPressed: () {}));
+  }
+
+  void handleFormSubmission(
+      BuildContext context, ContactAddEditModel model) async {
+    if (!_contactAddEditFormKey.currentState.validate()) return;
+    _contactAddEditFormKey.currentState.save();
+    model.contact.numbers = numbers;
+    model.contact.emails = emails;
+    model.contact.image = selectedImage;
+    int contactId = await model.addContact();
+    if (model.contact.emails.length > 0) {
+      await model.addEmails(emails, contactId);
+    }
+    if (model.contact.numbers.length > 0) {
+      await model.addNumbers(numbers, contactId);
+    }
+    Navigator.of(context).pushNamed('contactList');
+  }
+
+  Future<File> handleImageSelected() async {
+    final picker = ImagePicker();
+    PickedFile file =
+        await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+    if (file != null) {
+      return File(file.path);
+    } else
+      return null;
   }
 
   @override
@@ -201,13 +151,47 @@ class _ContactEditAddPageState extends State<ContactEditAddPage> {
         builder: (context, child, model) => Scaffold(
           body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
+            child: ListView(
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
               children: [
+                GestureDetector(
+                  onTap: () async {
+                    File img = await handleImageSelected();
+                    setState(() {
+                      selectedImage = img;
+                    });
+                  },
+                  child: CircleAvatar(
+                    radius: 45.0,
+                    backgroundColor: Colors.grey,
+                    child: selectedImage != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(60),
+                            child: Image.file(
+                              selectedImage,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.fitHeight,
+                            ),
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(60),
+                            ),
+                            width: 100,
+                            height: 100,
+                            child: Icon(
+                              Icons.camera_alt,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                  ),
+                ),
                 Form(
                   key: _contactAddEditFormKey,
-                  child: ListView(
-                    scrollDirection: Axis.vertical,
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
                     children: [
                       FormTextField(
                         controller: nameController,
@@ -216,27 +200,19 @@ class _ContactEditAddPageState extends State<ContactEditAddPage> {
                           return value.isEmpty ? 'Name cannot be empty' : null;
                         },
                         handleData: (String value) {
-                          model.name = value;
+                          model.contact.name = value;
                         },
                       ),
                       FormTextField(
                         controller: addressController,
                         label: 'Address',
                         handleData: (String value) {
-                          model.email = value;
+                          model.contact.address = value;
                         },
                       ),
                       Row(
                         children: [
-                          Expanded(
-                            child: FormTextField(
-                              controller: phoneNumberController,
-                              label: 'Phone Number',
-                              handleData: (String value) {
-                                model.number = value;
-                              },
-                            ),
-                          ),
+                          Text('Add new Number'),
                           IconButton(
                             icon: Icon(
                               Icons.add,
@@ -244,24 +220,38 @@ class _ContactEditAddPageState extends State<ContactEditAddPage> {
                             ),
                             onPressed: () {
                               setState(() {
-                                phoneNumbersFieldAdd(model);
-                                phoneNumbersField =
-                                    phoneNumberFieldBuilder(model);
+                                addNewPhoneNumberField(model);
+                                addablePhoneNumbersField =
+                                    addablePhoneNumberFieldBuilder(model);
                               });
                             },
                           ),
                         ],
                       ),
-                      ...phoneNumbersField,
-                      FormTextField(
-                        controller: emailController,
-                        label: 'Email',
-                        handleData: (String value) {
-                          model.email = value;
-                        },
+                      ...addablePhoneNumbersField,
+                      Row(
+                        children: [
+                          Text('Add new Email'),
+                          IconButton(
+                            icon: Icon(
+                              Icons.add,
+                              size: 30.0,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                addNewEmailField(model);
+                                addableEmailFields =
+                                    addableEmailFieldBuilder(model);
+                              });
+                            },
+                          ),
+                        ],
                       ),
+                      ...addableEmailFields,
                       MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          handleFormSubmission(context, model);
+                        },
                         child: Text(
                           'Add Contact',
                           style: TextStyle(

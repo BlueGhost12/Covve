@@ -85,32 +85,6 @@ class LoginPage extends StatelessWidget {
                       MaterialButton(
                         onPressed: () async {
                           handleFormSubmission(context, model);
-                          // if (!_loginFormKey.currentState.validate()) return;
-                          // int id = await model.checkIfValidCredentials(
-                          //     emailController.text, passwordController.text);
-                          // if (id < 0) {
-                          //   ScaffoldMessenger.of(context).showSnackBar(
-                          //     SnackBar(
-                          //       content: Text(
-                          //         'Invalid email or password',
-                          //         textAlign: TextAlign.center,
-                          //       ),
-                          //       backgroundColor: Colors.red[300],
-                          //     ),
-                          //   );
-                          //   return;
-                          // }
-                          // _loginFormKey.currentState.save();
-                          // final prefs = await SharedPreferences.getInstance();
-                          // Map userInfo = {'userId': id, 'email': model.email};
-                          // String info = jsonEncode(userInfo);
-                          // prefs.setString('userInfo', info);
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => ContactListPage(),
-                          //   ),
-                          // );
                         },
                         child: Text(
                           'Login',

@@ -22,6 +22,7 @@ class DatabaseHelper {
   static final contactName = 'name';
   static final contactId = 'contactId';
   static final contactAddress = 'address';
+  static final contactPicture = 'picture';
 
   // phone Numbers table columns
   static final phoneNumberId = 'id'; // linked with contactsTableColumnContactId
@@ -61,8 +62,9 @@ class DatabaseHelper {
         CREATE TABLE $_contactsTable(
           $contactUserId INTEGER,
           $contactName TEXT NOT NULL,
-          $contactId INTEGER,
-          $contactAddress TEXT NOT NULL)
+          $contactId INTEGER PRIMARY KEY,
+          $contactPicture BLOB,
+          $contactAddress TEXT)
         ''');
     db.execute('''
         CREATE TABLE $_phoneNumbersTable(
@@ -104,5 +106,27 @@ class DatabaseHelper {
       return -1;
     else
       return userInfo['id'];
+  }
+
+  Future<int> addContactToDb(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    return await db.insert(_contactsTable, row);
+  }
+
+  Future<int> addPhoneNumberToDb(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    return await db.insert(_phoneNumbersTable, row);
+  }
+
+  Future<int> addEmailToDb(Map<String, dynamic> row) async {
+    Database db = await instance.database;
+    return await db.insert(_emailsTable, row);
+  }
+
+  Future<List<Map>> getAllContacts(int id) async {
+    Database db = await instance.database;
+    List<dynamic> whereArgs = [id];
+    return await db.query(_contactsTable,
+        where: '$contactUserId = ?', whereArgs: whereArgs);
   }
 }

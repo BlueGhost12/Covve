@@ -1,18 +1,16 @@
-import 'package:covve/Helpers/navigator.dart';
 import 'package:covve/Scoped_models/contact_list_model.dart';
 import 'package:covve/Services/sharedPrefs.dart';
-import 'package:covve/Views/contact_add_edit_view.dart';
-import 'package:covve/Views/login_view.dart';
 import 'package:covve/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ContactListPage extends StatelessWidget {
   final SharedPrefs sharedPrefs = locator<SharedPrefs>();
+  final items = List<String>.generate(100, (i) => "Item $i");
 
   void handleLogout(BuildContext context) {
     sharedPrefs.removeSharedPrefs();
-    navigate(context, LoginPage());
+    Navigator.of(context).pushNamed('login');
   }
 
   void handleAddContacts(BuildContext context) {
@@ -40,49 +38,53 @@ class ContactListPage extends StatelessWidget {
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: ListView(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          'Your Contacts',
-                          style: TextStyle(
-                            fontSize: 30.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blueGrey.shade700,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Your Contacts',
+                              style: TextStyle(
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueGrey.shade700,
+                              ),
+                            ),
+                            Text(
+                              model.contacts.isEmpty
+                                  ? 'You don\'t have any contacts'
+                                  : model.contacts.length,
+                              style: TextStyle(
+                                fontSize: 13.0,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          model.contacts.isEmpty
-                              ? 'You don\'t have any contacts'
-                              : model.contacts.length,
-                          style: TextStyle(
-                            fontSize: 13.0,
-                            color: Colors.grey,
+                        IconButton(
+                          icon: Icon(
+                            Icons.person_add,
+                            size: 40.0,
                           ),
-                        ),
+                          onPressed: () {
+                            handleAddContacts(context);
+                          },
+                        )
                       ],
                     ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.person_add,
-                        size: 40.0,
-                      ),
-                      onPressed: () {
-                        handleAddContacts(context);
-                      },
-                    )
+                    Divider(
+                      thickness: 1.0,
+                    ),
                   ],
                 ),
-                Divider(
-                  thickness: 1.0,
-                )
               ],
             ),
           ),
