@@ -129,4 +129,8 @@ class DatabaseHelper {
     return await db.query(_contactsTable,
         where: '$contactUserId = ?', whereArgs: whereArgs);
   }
+
+  Future<void> deleteContact(int id) async {
+    // Database db = await instance
+  }
 }

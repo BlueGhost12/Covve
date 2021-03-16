@@ -163,11 +163,11 @@ class _ContactEditAddPageState extends State<ContactEditAddPage> {
                     });
                   },
                   child: CircleAvatar(
-                    radius: 45.0,
+                    radius: 50.0,
                     backgroundColor: Colors.grey,
                     child: selectedImage != null
                         ? ClipRRect(
-                            borderRadius: BorderRadius.circular(60),
+                            borderRadius: BorderRadius.circular(50),
                             child: Image.file(
                               selectedImage,
                               width: 100,
@@ -178,7 +178,7 @@ class _ContactEditAddPageState extends State<ContactEditAddPage> {
                         : Container(
                             decoration: BoxDecoration(
                               color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(60),
+                              borderRadius: BorderRadius.circular(50),
                             ),
                             width: 100,
                             height: 100,

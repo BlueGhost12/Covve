@@ -23,12 +23,19 @@ class ContactAddEditModel extends Model {
   static final colPicture = 'picture';
 
   Map<String, dynamic> contactToMap() {
-    return <String, dynamic>{
-      colId: contact.id,
-      colName: contact.name,
-      colAddress: contact.address,
-      colPicture: contact.image.readAsBytesSync()
-    };
+    if (contact.image != null) {
+      return <String, dynamic>{
+        colId: contact.id,
+        colName: contact.name,
+        colAddress: contact.address,
+        colPicture: contact.image.readAsBytesSync()
+      };
+    } else
+      return <String, dynamic>{
+        colId: contact.id,
+        colName: contact.name,
+        colAddress: contact.address,
+      };
   }
 
   Future<void> onImageSelect(ContactAddEditModel model) async {

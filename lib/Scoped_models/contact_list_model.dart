@@ -13,7 +13,6 @@ class ContactListModel extends Model {
 
   ContactListModel() {
     getUserInfo();
-    notifyListeners();
   }
 
   Contact fromMap(Map result) {
@@ -27,6 +26,8 @@ class ContactListModel extends Model {
 
   void getUserInfo() async {
     userInfo = await sharedPrefs.getUserInfo();
+    await getAllContacts();
+    notifyListeners();
   }
 
   Future<void> getAllContacts() async {
@@ -36,4 +37,6 @@ class ContactListModel extends Model {
       contacts.add(fromMap(result));
     });
   }
+
+  Future<void> deleteContact(int id) async {}
 }
