@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:covve/Custom_widgets/add_email_field.dart';
 import 'package:covve/Custom_widgets/add_phoneNumber_field.dart';
 import 'package:covve/Custom_widgets/form_text_field.dart';
@@ -27,7 +28,7 @@ class _ContactEditAddPageState extends State<ContactEditAddPage> {
   List<TextEditingController> emailControllers = [];
   List<PhoneNumber> numbers = [];
   List<Email> emails = [];
-  File selectedImage;
+  Uint8List selectedImage;
 
   List<CustomEmailField> addableEmailFields = [];
   List<CustomPhoneNumberField> addablePhoneNumbersField = [];
@@ -133,12 +134,12 @@ class _ContactEditAddPageState extends State<ContactEditAddPage> {
     Navigator.of(context).pushNamed('contactList');
   }
 
-  Future<File> handleImageSelected() async {
+  Future<Uint8List> handleImageSelected() async {
     final picker = ImagePicker();
     PickedFile file =
         await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
     if (file != null) {
-      return File(file.path);
+      return File(file.path).readAsBytesSync();
     } else
       return null;
   }
@@ -157,7 +158,7 @@ class _ContactEditAddPageState extends State<ContactEditAddPage> {
               children: [
                 GestureDetector(
                   onTap: () async {
-                    File img = await handleImageSelected();
+                    Uint8List img = await handleImageSelected();
                     setState(() {
                       selectedImage = img;
                     });
@@ -168,7 +169,7 @@ class _ContactEditAddPageState extends State<ContactEditAddPage> {
                     child: selectedImage != null
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(50),
-                            child: Image.file(
+                            child: Image.memory(
                               selectedImage,
                               width: 100,
                               height: 100,

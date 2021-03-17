@@ -28,7 +28,7 @@ class ContactAddEditModel extends Model {
         colId: contact.id,
         colName: contact.name,
         colAddress: contact.address,
-        colPicture: contact.image.readAsBytesSync()
+        colPicture: contact.image
       };
     } else
       return <String, dynamic>{
@@ -38,12 +38,12 @@ class ContactAddEditModel extends Model {
       };
   }
 
-  Future<void> onImageSelect(ContactAddEditModel model) async {
+  Future<void> onImageSelect() async {
     final picker = ImagePicker();
     PickedFile file =
         await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
     if (file != null) {
-      model.contact.image = File(file.path);
+      contact.image = File(file.path).readAsBytesSync();
 
       // String img = base64Encode(model.contact.image.readAsBytesSync());
       notifyListeners();

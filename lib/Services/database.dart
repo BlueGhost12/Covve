@@ -130,7 +130,10 @@ class DatabaseHelper {
         where: '$contactUserId = ?', whereArgs: whereArgs);
   }
 
-  Future<void> deleteContact(int id) async {
-    // Database db = await instance
+  Future<void> deleteContact(int _contactId) async {
+    Database db = await instance.database;
+    List<dynamic> whereArgs = [_contactId];
+    await db.delete(_contactsTable,
+        where: '$contactId = ?', whereArgs: whereArgs);
   }
 }

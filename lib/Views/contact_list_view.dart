@@ -8,7 +8,6 @@ import 'package:covve/Helpers/random_color_picker.dart';
 
 class ContactListPage extends StatelessWidget {
   final SharedPrefs sharedPrefs = locator<SharedPrefs>();
-  final items = List<String>.generate(100, (i) => "Item $i");
 
   void handleLogout(BuildContext context) {
     sharedPrefs.removeSharedPrefs();
@@ -90,28 +89,48 @@ class ContactListPage extends StatelessWidget {
                       (contact) => PopupMenuButton(
                         padding: EdgeInsets.all(0.0),
                         onSelected: (String value) async {
+                          switch (value) {
+                            case 'Delete':
+                              await model.deleteContact(contact.contactId);
+                              break;
+                            case 'View':
+                              Navigator.of(context).pushNamed('contactDetails');
+                              break;
+                          }
                           // value == 'Delete' ? await model.deleteContact(contact.id) : value == 'Edit' ? await model.EditContact(contact.id) : value =='Info' ? null;
                         },
                         child: Card(
                           elevation: 0.0,
                           child: Padding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(5.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 CircleAvatar(
                                   radius: 25.0,
                                   backgroundColor: randomColorPicker().shade200,
-                                  child: Text(
-                                    contact.name[0].toUpperCase(),
-                                    style: TextStyle(
-                                      fontSize: 30.0,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                                  child: contact.image != null
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          child: Image.memory(
+                                            contact.image,
+                                            width: 100,
+                                            height: 100,
+                                            fit: BoxFit.fitHeight,
+                                          ),
+                                        )
+                                      : Text(
+                                          contact.name[0].toUpperCase(),
+                                          style: TextStyle(
+                                            fontSize: 30.0,
+                                            color: Colors.white,
+                                          ),
+                                        ),
                                 ),
                                 Container(
-                                  width: 140.0,
+                                  margin: EdgeInsets.only(left: 10.0),
+                                  width: 132.0,
                                   child: Text(
                                     contact.name,
                                     // textAlign: TextAlign.start,
@@ -139,6 +158,7 @@ class ContactListPage extends StatelessWidget {
                             ),
                           ),
                         ),
+                        key: UniqueKey(),
                         itemBuilder: (BuildContext context) => [
                           PopupMenuItem(
                             child: Row(

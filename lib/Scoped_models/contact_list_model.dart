@@ -21,6 +21,7 @@ class ContactListModel extends Model {
     contact.name = result['name'];
     contact.address = result['address'];
     contact.id = result['id'];
+    contact.image = result['picture'] != null ? result['picture'] : null;
     return contact;
   }
 
@@ -38,5 +39,9 @@ class ContactListModel extends Model {
     });
   }
 
-  Future<void> deleteContact(int id) async {}
+  Future<void> deleteContact(int contactId) async {
+    await dbService.deleteContact(contactId);
+    contacts.removeWhere((contact) => contact.contactId == contactId);
+    notifyListeners();
+  }
 }
