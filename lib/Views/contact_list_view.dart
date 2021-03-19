@@ -3,6 +3,7 @@ import 'package:covve/Services/sharedPrefs.dart';
 import 'package:covve/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:covve/Helpers/random_color_picker.dart';
 
@@ -94,7 +95,8 @@ class ContactListPage extends StatelessWidget {
                               await model.deleteContact(contact.contactId);
                               break;
                             case 'View':
-                              Navigator.of(context).pushNamed('contactDetails');
+                              Navigator.of(context).pushNamed('contactDetails',
+                                  arguments: contact);
                               break;
                           }
                           // value == 'Delete' ? await model.deleteContact(contact.id) : value == 'Edit' ? await model.EditContact(contact.id) : value =='Info' ? null;
@@ -116,8 +118,7 @@ class ContactListPage extends StatelessWidget {
                                           child: Image.memory(
                                             contact.image,
                                             width: 100,
-                                            height: 100,
-                                            fit: BoxFit.fitHeight,
+                                            fit: BoxFit.cover,
                                           ),
                                         )
                                       : Text(

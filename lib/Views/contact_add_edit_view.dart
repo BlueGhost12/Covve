@@ -172,7 +172,6 @@ class _ContactEditAddPageState extends State<ContactEditAddPage> {
                             child: Image.memory(
                               selectedImage,
                               width: 100,
-                              height: 100,
                               fit: BoxFit.fitHeight,
                             ),
                           )
