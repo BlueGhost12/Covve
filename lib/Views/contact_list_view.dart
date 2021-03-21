@@ -98,6 +98,10 @@ class ContactListPage extends StatelessWidget {
                               Navigator.of(context).pushNamed('contactDetails',
                                   arguments: contact);
                               break;
+                            case 'Edit':
+                              Navigator.of(context)
+                                  .pushNamed('contactEdit', arguments: contact);
+                              break;
                           }
                           // value == 'Delete' ? await model.deleteContact(contact.id) : value == 'Edit' ? await model.EditContact(contact.id) : value =='Info' ? null;
                         },

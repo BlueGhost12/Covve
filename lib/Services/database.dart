@@ -136,4 +136,18 @@ class DatabaseHelper {
     await db.delete(_contactsTable,
         where: '$contactId = ?', whereArgs: whereArgs);
   }
+
+  Future<List<Map>> getAllNumbers(int _contactId) async {
+    Database db = await instance.database;
+    List<dynamic> whereArgs = [_contactId];
+    return await db.query(_phoneNumbersTable,
+        where: '$phoneNumberId = ?', whereArgs: whereArgs);
+  }
+
+  Future<List<Map>> getAllEmails(int _contactId) async {
+    Database db = await instance.database;
+    List<dynamic> whereArgs = [_contactId];
+    return await db.query(_emailsTable,
+        where: '$emailId = ?', whereArgs: whereArgs);
+  }
 }

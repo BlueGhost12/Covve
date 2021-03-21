@@ -1,6 +1,7 @@
 import 'package:covve/Models/contact.dart';
 import 'package:covve/Views/contact_add_edit_view.dart';
 import 'package:covve/Views/contact_details_view.dart';
+import 'package:covve/Views/contact_edit_view.dart';
 import 'package:covve/Views/contact_list_view.dart';
 import 'package:covve/Views/login_view.dart';
 import 'package:covve/Views/signup_view.dart';
@@ -23,6 +24,10 @@ class RouteGenerator {
         return args is Contact
             ? MaterialPageRoute(
                 builder: (_) => ContactDetailsPage(contact: args))
+            : null;
+      case 'contactEdit':
+        return args is Contact
+            ? MaterialPageRoute(builder: (_) => ContactEditPage(contact: args))
             : null;
       default:
         return null;

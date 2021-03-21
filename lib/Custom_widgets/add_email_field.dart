@@ -10,7 +10,7 @@ class CustomEmailField extends StatelessWidget {
       this.index,
       this.controller,
       @required this.onHandle,
-      @required this.model,
+      this.model,
       @required this.onPressed});
   final String label;
   final TextEditingController controller;

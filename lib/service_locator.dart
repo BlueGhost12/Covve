@@ -1,6 +1,7 @@
 import 'package:covve/Models/contact.dart';
 import 'package:covve/Scoped_models/contact_add_edit_model.dart';
 import 'package:covve/Scoped_models/contact_details_model.dart';
+import 'package:covve/Scoped_models/contact_edit_model.dart';
 import 'package:covve/Scoped_models/contact_list_model.dart';
 import 'package:covve/Scoped_models/signup_model.dart';
 import 'package:covve/Services/database.dart';
@@ -22,4 +23,6 @@ void setupLocator() {
   locator.registerFactory<ContactAddEditModel>(() => ContactAddEditModel());
   locator.registerFactoryParam<ContactDetailsModel, Contact, void>(
       (contact, params2) => ContactDetailsModel(contact: contact));
+  locator.registerFactoryParam<ContactEditModel, Contact, void>(
+      (contact, params2) => ContactEditModel(contact: contact));
 }

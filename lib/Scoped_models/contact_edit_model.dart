@@ -7,10 +7,10 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../service_locator.dart';
 
-class ContactDetailsModel extends Model {
+class ContactEditModel extends Model {
+  final Contact contact;
   DatabaseHelper dbService = locator<DatabaseHelper>();
-  Contact contact = new Contact();
-  ContactDetailsModel({@required this.contact});
+  ContactEditModel({@required this.contact});
 
   PhoneNumber toMapPhoneNumber(Map data) {
     PhoneNumber number = new PhoneNumber();
